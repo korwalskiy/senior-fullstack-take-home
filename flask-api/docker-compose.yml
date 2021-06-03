@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  api:
+    build: .
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=True
+      - FLASK_APP=/opt/api/app
+    command: ["flask", "run", "--host", "0.0.0.0"]
+    volumes:
+      - .:/opt/api
+    ports:
+      - 5000:5000
