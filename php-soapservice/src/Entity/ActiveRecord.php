@@ -7,11 +7,13 @@ date_default_timezone_set('UTC');
 use JsonSerializable;
 use DateTime;
 use PDO;
+use PDOException;
 
 use Application\config\MysqlDBAdapter;
 use Application\Exception\NotImplementedException;
 use Application\Exception\ActiveRecordException;
 use Application\Exception\RecordNotFoundException;
+use Application\Exception\BadQueryException;
 
 class ActiveRecord implements JsonSerializable
 {
@@ -88,11 +90,16 @@ class ActiveRecord implements JsonSerializable
             $sql .= " VALUES $values;";
 
             $connection = $this->database->getConnection();
-            $connection->exec($sql);
 
-            $this->id = $connection->lastInsertId();
+            try {
+                $connection->exec($sql);
 
-            return true;
+                $this->id = $connection->lastInsertId();
+
+                return true;
+            } catch (PDOException $e) {
+                return $e->getMessage();
+            }
         }
 
         $sql = 'UPDATE ' . static::TABLE_NAME;
@@ -153,6 +160,75 @@ class ActiveRecord implements JsonSerializable
         $sql = 'DELETE FROM ' . static::TABLE_NAME . " WHERE id = $id";
         $conn = static::getConnection();
         $conn->exec($sql);
+    }
+
+    public static function all()
+    {
+        $sql = 'SELECT * FROM ' . static::TABLE_NAME . ";";
+        $conn = static::getConnection();
+        $stmt = $conn->query($sql);
+        $stmt->setFetchMode(PDO::FETCH_OBJ);
+        $record = $stmt->fetchAll();
+        $record_data = [];
+
+        if ($record) {
+            $entity_class = get_called_class();
+
+            foreach ($record as $rec) {
+                $entity = new $entity_class();
+                $fields = get_object_vars($rec);
+                foreach ($fields as $field_name => $value) {
+                    if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
+                        $entity->$field_name = new DateTime($value);
+                        continue;
+                    }
+                    $entity->$field_name = $value;
+                }
+                $record_data[] = $entity;
+            }
+
+        }
+        return $record_data;
+    }
+
+    public static function query(string $classname, string $sql, array $args)
+    {
+        try {
+
+            $conn = static::getConnection();
+            $stmt= $conn->prepare($sql);
+            $stmt->execute($args);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            $record = $stmt->fetchAll();
+
+            if (is_array($record)) {
+                $record_data = [];
+                $classname = "Application\Entity\\". $classname;
+
+                foreach ($record as $rec) {
+                    $entity = new $classname;
+
+                    $fields = get_object_vars($rec);
+                    foreach ($fields as $field_name => $value) {
+                        if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
+                            $entity->$field_name = new DateTime($value);
+                            continue;
+                        }
+                        $entity->$field_name = $value;
+                    }
+                    $record_data[] = $entity;
+                }
+
+                return $record_data;
+            }
+            else if (empty($record)) {
+
+                return [];
+            }
+        } catch (PDOException $e) {
+
+            throw (new BadQueryException($e->getMessage() . ' :: ' . preg_replace( "/\r|\n|\s{2,}/", " ", $sql) .'['. implode(', ', $args). ']', "Query failed!"));
+        }
     }
 
     protected static function getConnection()
