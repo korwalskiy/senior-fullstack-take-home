@@ -1,14 +1,14 @@
-from flask import Flask, request
+from flask import Flask, request, Blueprint
 from lib.interview_soap_client import InterviewSoapClient
 
 app = Flask(__name__)
+app_api = Blueprint('api_prefix', __name__)
 
-
-@app.get("/")
+@app_api.get("/")
 def index():
     return "Congratulations, lets get started!"
 
-@app.get("/soap")
+@app_api.get("/soap")
 def soap():
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -21,7 +21,7 @@ def soap():
 ##
 # COMPANY CRUD ROUTES
 ##
-@app.get("/companies")
+@app_api.get("/companies")
 def companies():
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -31,7 +31,7 @@ def companies():
 
     return res
 
-@app.get("/company/<int:id>")
+@app_api.get("/company/<int:id>")
 def companyGet(id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -42,7 +42,7 @@ def companyGet(id):
 
     return res
 
-@app.delete("/company/<int:id>/delete")
+@app_api.delete("/company/<int:id>/delete")
 def companyDelete(id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -53,7 +53,7 @@ def companyDelete(id):
 
     return res
 
-@app.post("/company")
+@app_api.post("/company")
 def companySave():
     soap_client = InterviewSoapClient()
 
@@ -76,7 +76,7 @@ def companySave():
 ##
 # SERVICE CATEGORY CRUD ROUTES
 ##
-@app.get("/servicecategories")
+@app_api.get("/servicecategories")
 def categories():
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -86,7 +86,7 @@ def categories():
 
     return res
 
-@app.get("/servicecategory/<int:id>")
+@app_api.get("/servicecategory/<int:id>")
 def categoryGet(id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -97,7 +97,7 @@ def categoryGet(id):
 
     return res
 
-@app.delete("/servicecategory/<int:id>/delete")
+@app_api.delete("/servicecategory/<int:id>/delete")
 def categoryDelete(id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -108,7 +108,7 @@ def categoryDelete(id):
 
     return res
 
-@app.post("/servicecategory")
+@app_api.post("/servicecategory")
 def categorySave():
     soap_client = InterviewSoapClient()
 
@@ -126,7 +126,7 @@ def categorySave():
 ##
 # SERVICE CRUD ROUTES
 ##
-@app.get("/services")
+@app_api.get("/services")
 def services():
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -136,7 +136,7 @@ def services():
 
     return res
 
-@app.get("/service/<int:id>")
+@app_api.get("/service/<int:id>")
 def serviceGet(id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -147,7 +147,7 @@ def serviceGet(id):
 
     return res
 
-@app.delete("/service/<int:id>/delete")
+@app_api.delete("/service/<int:id>/delete")
 def serviceDelete(id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -158,7 +158,7 @@ def serviceDelete(id):
 
     return res
 
-@app.post("/service")
+@app_api.post("/service")
 def serviceSave():
     soap_client = InterviewSoapClient()
 
@@ -178,7 +178,7 @@ def serviceSave():
 ##
 # COMPANY - SERVICES CRUD ROUTES
 ##
-@app.get("/company/<int:id>/services")
+@app_api.get("/company/<int:id>/services")
 def companyServices(id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -189,7 +189,7 @@ def companyServices(id):
 
     return res
 
-@app.get("/company/<int:id>/service/<int:service_id>")
+@app_api.get("/company/<int:id>/service/<int:service_id>")
 def companyServiceGet(id, service_id):
     soap_client = InterviewSoapClient()
     res = soap_client.call(
@@ -200,7 +200,7 @@ def companyServiceGet(id, service_id):
 
     return res
 
-@app.delete("/company/<int:id>/service/delete")
+@app_api.delete("/company/<int:id>/service/delete")
 def companyServiceDelete(id):
     soap_client = InterviewSoapClient()
 
@@ -214,3 +214,5 @@ def companyServiceDelete(id):
 
     return res
 
+
+app.register_blueprint(app_api, url_prefix='/api')
