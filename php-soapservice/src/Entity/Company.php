@@ -33,4 +33,42 @@ class Company extends ActiveRecord
             'address' => $this->fullAddress()
         ];
     }
+
+    public static function get_company_services(int $company_id)
+    {
+        $sql = "SELECT *
+                FROM `services`
+                WHERE `company_id` = ?
+            ";
+
+        $args = [$company_id];
+
+        return self::query('Service', $sql, $args);
+    }
+
+    public static function get_company_service_by_id(int $company_id, int $service_id)
+    {
+        $sql = "SELECT *
+                FROM `services`
+                WHERE `company_id` = ?
+                AND `id` = ?
+            ";
+
+        $args = [$company_id, $service_id];
+
+        return self::query('Service', $sql, $args);
+    }
+
+    public static function delete_company_service_by_id(int $company_id, int $service_id)
+    {
+        $sql = "DELETE
+                FROM `services`
+                WHERE `company_id` = ?
+                AND `id` = ?
+            ";
+
+        $args = [$company_id, $service_id];
+
+        return self::query('Service', $sql, $args);
+    }
 }
