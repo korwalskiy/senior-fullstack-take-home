@@ -167,4 +167,19 @@ class CompanyService extends BaseService
             ];
         }
     }
+
+    public function getCompanyServiceRate()
+    {
+        try {
+            $rate = Company::get_company_service_rates($this->params['company_id'], $this->params['service_id']);
+            return [
+                'data' => $rate
+            ];
+        } catch (BadQueryException $e) {
+            return [
+                'error' => $e->getMessage(),
+                'status_code' => ResponseCode::NOT_FOUND
+            ];
+        }
+    }
 }

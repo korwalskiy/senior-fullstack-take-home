@@ -176,7 +176,7 @@ def serviceSave():
     return res
 
 ##
-# COMPANY - SERVICES CRUD ROUTES
+# COMPANY - SERVICES RD ROUTES
 ##
 @app_api.get("/company/<int:id>/services")
 def companyServices(id):
@@ -271,7 +271,7 @@ def employeeSave():
     return res
 
 ##
-# COMPANY - EMPLOYEE CRUD ROUTES
+# COMPANY - EMPLOYEE RD ROUTES
 ##
 @app_api.get("/company/<int:id>/employees")
 def companyEmployees(id):
@@ -310,7 +310,7 @@ def companyEmployeeDelete(id):
     return res
 
 ##
-# SERVICE - RATE CRUD ROUTES
+# SERVICE - RATE CRU ROUTES
 ##
 @app_api.get("/service/<int:service_id>/rate")
 def serviceRateGet(service_id):
@@ -339,6 +339,20 @@ def serviceRatePost(service_id):
         service='ServicesService',
         action='saveServiceRate',
         args={'service_id': service_id, 'id': id, 'unit': unit, 'duration': duration, 'amount': amount, 'supply_markup': supply_markup, 'overhead_markup': overhead_markup, 'misc_markup': misc_markup}
+    )
+
+    return res
+
+##
+# COMPABY - SERVICE - RATE GET ROUTES
+##
+@app_api.get("/company/<int:company_id>/service/<int:service_id>/rate")
+def companyServiceRateGet(company_id, service_id):
+    soap_client = InterviewSoapClient()
+    res = soap_client.call(
+        service='CompanyService',
+        action='getCompanyServiceRate',
+        args={'company_id': company_id, 'service_id': service_id}
     )
 
     return res

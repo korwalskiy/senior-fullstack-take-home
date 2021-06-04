@@ -109,4 +109,17 @@ class Company extends ActiveRecord
 
         return self::query('Employee', $sql, $args);
     }
+
+    public static function get_company_service_rates(int $company_id, int $service_id)
+    {
+        $sql = "SELECT *
+                FROM `service_rates`
+                WHERE service_id IN (SELECT `id` FROM `services` WHERE `company_id` = ?)
+                AND  `service_id` = ?
+            ";
+
+        $args = [$company_id, $service_id];
+
+        return self::query('ServiceRate', $sql, $args);
+    }
 }
