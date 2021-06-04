@@ -3,6 +3,7 @@
 namespace Application\Service;
 
 use Application\Entity\Service;
+use Application\Entity\ServiceRate;
 use Application\Exception\NotImplementedException;
 use Application\Exception\RecordNotFoundException;
 
@@ -71,5 +72,58 @@ class ServicesService extends BaseService
                 'status_code' => ResponseCode::NOT_FOUND
             ];
         }
+    }
+
+    public function getServiceRate()
+    {
+        try {
+            $rate = Service::get_service_rate($this->params['service_id']);
+            return [
+                'data' => $rate
+            ];
+        } catch (BadQueryException $e) {
+            return [
+                'error' => $e->getMessage(),
+                'status_code' => ResponseCode::NOT_FOUND
+            ];
+        }
+    }
+
+    public function saveServiceRate()
+    {
+        $rate = new ServiceRate;
+
+        $db_rate = Service::get_service_rate($this->params['service_id']);
+        if (count($db_rate) && array_key_exists('id', $db_rate[0])) {
+            $rate->id = $db_rate[0]->id;
+        }
+        else {
+            $rate->id = $this->params['id'];
+        }
+
+        $rate->service_id = $this->params['service_id'];
+        $rate->unit = $this->params['unit'];
+        $rate->amount = $this->params['amount'];
+        $rate->duration = $this->params['duration'];
+        $rate->supply_markup = $this->params['supply_markup'];
+        $rate->overhead_markup = $this->params['overhead_markup'];
+        $rate->misc_markup = $this->params['misc_markup'];
+
+        if (($response = $rate->save()) === true) {
+            $service = Service::find($this->params['service_id']);
+            if (is_null($rate->id)) {
+                return [
+                    'data' => 'Posted new rate for '. $service->name . ' service'
+                ];
+            }
+            return [
+                'data' => 'Updated rate for '. $service->name . ' service'
+            ];
+        }
+
+        return [
+            'error' => $response,
+            'status_code' => ResponseCode::NOT_MODIFIED
+        ];
     }
 }

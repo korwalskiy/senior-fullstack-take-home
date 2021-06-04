@@ -111,9 +111,54 @@ class CompanyService extends BaseService
     public function deleteCompanyServiceById()
     {
         try {
-            $service = Company::delete_company_service_by_id($this->params['company_id'], $this->params['service_id']);
+            Company::delete_company_service_by_id($this->params['company_id'], $this->params['service_id']);
             return [
-                'data' => $service
+                'data' => []
+            ];
+        } catch (BadQueryException $e) {
+            return [
+                'error' => $e->getMessage(),
+                'status_code' => ResponseCode::NOT_FOUND
+            ];
+        }
+    }
+
+    public function getCompanyEmployees()
+    {
+        try {
+            $companyEmployees = Company::get_company_employees($this->params['company_id']);
+            return [
+                'data' => $companyEmployees
+            ];
+        } catch (BadQueryException $e) {
+            return [
+                'error' => $e->getMessage(),
+                'status_code' => ResponseCode::NOT_FOUND
+            ];
+        }
+    }
+
+    public function getCompanyEmployeeById()
+    {
+        try {
+            $employee = Company::get_company_employee_by_id($this->params['company_id'], $this->params['employee_id']);
+            return [
+                'data' => $employee
+            ];
+        } catch (BadQueryException $e) {
+            return [
+                'error' => $e->getMessage(),
+                'status_code' => ResponseCode::NOT_FOUND
+            ];
+        }
+    }
+
+    public function deleteCompanyEmployeeById()
+    {
+        try {
+            Company::delete_company_employee_by_id($this->params['company_id'], $this->params['employee_id']);
+            return [
+                'data' => []
             ];
         } catch (BadQueryException $e) {
             return [

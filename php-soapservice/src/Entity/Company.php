@@ -71,4 +71,42 @@ class Company extends ActiveRecord
 
         return self::query('Service', $sql, $args);
     }
+
+    public static function get_company_employees(int $company_id)
+    {
+        $sql = "SELECT *
+                FROM `employees`
+                WHERE `company_id` = ?
+            ";
+
+        $args = [$company_id];
+
+        return self::query('Employee', $sql, $args);
+    }
+
+    public static function get_company_employee_by_id(int $company_id, int $employee_id)
+    {
+        $sql = "SELECT *
+                FROM `employees`
+                WHERE `company_id` = ?
+                AND `id` = ?
+            ";
+
+        $args = [$company_id, $employee_id];
+
+        return self::query('Employee', $sql, $args);
+    }
+
+    public static function delete_company_employee_by_id(int $company_id, int $employee_id)
+    {
+        $sql = "DELETE
+                FROM `employees`
+                WHERE `company_id` = ?
+                AND `id` = ?
+            ";
+
+        $args = [$company_id, $employee_id];
+
+        return self::query('Employee', $sql, $args);
+    }
 }

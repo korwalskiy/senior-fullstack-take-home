@@ -27,7 +27,6 @@ class Service extends ActiveRecord
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'company' => $this->getCompany(),
             'company' => [
                 'id' => $this->company_id,
                 'name' => $this->getCompany()->name
@@ -37,5 +36,17 @@ class Service extends ActiveRecord
                 'name' => $this->getServiceCategory()->name
             ]
         ];
+    }
+
+    public static function get_service_rate(int $service_id)
+    {
+        $sql = "SELECT *
+                FROM `service_rates`
+                WHERE `service_id` = ?
+            ";
+
+        $args = [$service_id];
+
+        return self::query('ServiceRate', $sql, $args);
     }
 }

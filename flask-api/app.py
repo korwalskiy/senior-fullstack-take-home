@@ -214,5 +214,134 @@ def companyServiceDelete(id):
 
     return res
 
+##
+# EMPLOYEE CRUD ROUTES
+##
+@app_api.get("/employees")
+def employees():
+    soap_client = InterviewSoapClient()
+    res = soap_client.call(
+        service='EmployeeService',
+        action='getAll'
+    )
+
+    return res
+
+@app_api.get("/employee/<int:id>")
+def employeeGet(id):
+    soap_client = InterviewSoapClient()
+    res = soap_client.call(
+        service='EmployeeService',
+        action='getEmployeeById',
+        args={'id': id}
+    )
+
+    return res
+
+@app_api.delete("/employee/<int:id>/delete")
+def employeeDelete(id):
+    soap_client = InterviewSoapClient()
+    res = soap_client.call(
+        service='EmployeeService',
+        action='deleteEmployeeById',
+        args={'id': id}
+    )
+
+    return res
+
+@app_api.post("/employee")
+def employeeSave():
+    soap_client = InterviewSoapClient()
+
+    id = request.form.get('id')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    email = request.form.get('email')
+    avatar_url = request.form.get('avatar_url')
+    role = request.form.get('role')
+    hourly_rate = request.form.get('hourly_rate')
+    company_id = request.form.get('company_id')
+
+    res = soap_client.call(
+        service='EmployeeService',
+        action='saveEmployee',
+        args={'id': id, 'first_name': first_name, 'last_name': last_name ,'email': email, 'avatar_url': avatar_url, 'role': role, 'company_id': company_id, 'hourly_rate': hourly_rate}
+    )
+
+    return res
+
+##
+# COMPANY - EMPLOYEE CRUD ROUTES
+##
+@app_api.get("/company/<int:id>/employees")
+def companyEmployees(id):
+    soap_client = InterviewSoapClient()
+    res = soap_client.call(
+        service='CompanyService',
+        action='getCompanyEmployees',
+        args={'company_id': id}
+    )
+
+    return res
+
+@app_api.get("/company/<int:id>/employee/<int:employee_id>")
+def companyEmployeeGet(id, employee_id):
+    soap_client = InterviewSoapClient()
+    res = soap_client.call(
+        service='CompanyService',
+        action='getCompanyEmployeeById',
+        args={'company_id': id, 'employee_id': employee_id}
+    )
+
+    return res
+
+@app_api.delete("/company/<int:id>/employee/delete")
+def companyEmployeeDelete(id):
+    soap_client = InterviewSoapClient()
+
+    employee_id = request.form.get('employee_id')
+
+    res = soap_client.call(
+        service='CompanyService',
+        action='deleteCompanyEmployeeById',
+        args={'company_id': id, 'employee_id': employee_id}
+    )
+
+    return res
+
+##
+# SERVICE - RATE CRUD ROUTES
+##
+@app_api.get("/service/<int:service_id>/rate")
+def serviceRateGet(service_id):
+    soap_client = InterviewSoapClient()
+    res = soap_client.call(
+        service='ServicesService',
+        action='getServiceRate',
+        args={'service_id': service_id}
+    )
+
+    return res
+
+@app_api.post("/service/<int:service_id>/rate")
+def serviceRatePost(service_id):
+    soap_client = InterviewSoapClient()
+
+    id = request.form.get('id')
+    unit = request.form.get('unit')
+    amount = request.form.get('amount')
+    duration = request.form.get('duration')
+    supply_markup = request.form.get('supply_markup')
+    overhead_markup = request.form.get('overhead_markup')
+    misc_markup = request.form.get('misc_markup')
+
+    res = soap_client.call(
+        service='ServicesService',
+        action='saveServiceRate',
+        args={'service_id': service_id, 'id': id, 'unit': unit, 'duration': duration, 'amount': amount, 'supply_markup': supply_markup, 'overhead_markup': overhead_markup, 'misc_markup': misc_markup}
+    )
+
+    return res
+
 
 app.register_blueprint(app_api, url_prefix='/api')
