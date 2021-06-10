@@ -61,7 +61,7 @@ CREATE TABLE `service_rates` (
   `created_at` timestamp,
   `updated_at` timestamp,
   `service_id` int,
-  `unit` decimal(4,2),
+  `unit` varchar(16),
   `amount` decimal(7,2),
   `duration` decimal(5,2),
   `supply_markup` decimal(10,2),
@@ -91,7 +91,7 @@ CREATE TABLE `service_requests` (
   `actual_start_date` timestamp,
   `actual_end_date` timestamp,
   `title` varchar(255),
-  `status` text,
+  `status` varchar(255),
   `adjustment` decimal(10,2),
   FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE
