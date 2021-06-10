@@ -18,6 +18,12 @@ def soap():
 
     return res
 
+@app_api.post("/webhook")
+def webhook():
+    payload  = request.get_json()
+    print(payload['issue']['body'], flush=True)
+    return "Service request POSTed"
+
 ##
 # COMPANY CRUD ROUTES
 ##
