@@ -1,4 +1,4 @@
-CREATE TABLE `companies` (
+CREATE TABLE IF NOT EXISTS `companies` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
@@ -10,7 +10,7 @@ CREATE TABLE `companies` (
   `tax_rate` decimal(5,2)
 );
 
-CREATE TABLE `employees` (
+CREATE TABLE IF NOT EXISTS `employees` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
@@ -24,7 +24,7 @@ CREATE TABLE `employees` (
   FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `holidays` (
+CREATE TABLE IF NOT EXISTS `holidays` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
@@ -37,14 +37,14 @@ CREATE TABLE `holidays` (
   FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `service_categories` (
+CREATE TABLE IF NOT EXISTS `service_categories` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
   `name` varchar(255) UNIQUE
 );
 
-CREATE TABLE `services` (
+CREATE TABLE IF NOT EXISTS `services` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
@@ -56,7 +56,7 @@ CREATE TABLE `services` (
   UNIQUE KEY `service_key` (`name`,`company_id`,`service_category_id`)
 );
 
-CREATE TABLE `service_rates` (
+CREATE TABLE IF NOT EXISTS `service_rates` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
@@ -70,7 +70,7 @@ CREATE TABLE `service_rates` (
   FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `customers` (
+CREATE TABLE IF NOT EXISTS `customers` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
@@ -80,7 +80,7 @@ CREATE TABLE `customers` (
   `email` varchar(255)
 );
 
-CREATE TABLE `service_requests` (
+CREATE TABLE IF NOT EXISTS `service_requests` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
@@ -97,7 +97,7 @@ CREATE TABLE `service_requests` (
   FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `workorders` (
+CREATE TABLE IF NOT EXISTS `workorders` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `created_at` timestamp,
   `updated_at` timestamp,
