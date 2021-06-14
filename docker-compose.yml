@@ -2,15 +2,15 @@ version: "3.7"
 
 services:
     db:
-        image: mysql:8
+        build:
+            context: ./mysql-db/
+            dockerfile: Dockerfile
+        image: 10hlab-mysql-db:v1
         container_name: 10hlab-db
-        command: --default-authentication-plugin=mysql_native_password
         ports:
             -   3307:3306
         env_file:
             -   ./mysql-db/.env
-        volumes:
-            -   ./mysql-db/migration:/docker-entrypoint-initdb.d
 
     soap:
         build:
@@ -19,6 +19,9 @@ services:
         image: 10hlab-soap-server:v1
         container_name: 10hlab-php
         command: ["wait.sh", "php", "-S", "0.0.0.0:7000"]
+        volumes:
+            -   ./php-soapservice:/opt/app
+            -   php_vendor:/opt/app/vendor
         ports:
             -   7000:7000
         links:
@@ -33,6 +36,8 @@ services:
         image: 10hlab-flask-api:v1
         container_name: 10hlab-api
         command: ["flask", "run", "--host", "0.0.0.0"]
+        volumes:
+            -   ./flask-api:/opt/api
         ports:
             -   5000:5000
         links:
@@ -40,13 +45,16 @@ services:
         depends_on:
             -   soap
 
-    front:
+    web:
         build:
             context: ./react-frontend/
             dockerfile: Dockerfile
         image: 10hlab-react-app:v1
-        container_name: 10hlab-front
+        container_name: 10hlab-web
         command: ["yarn", "start"]
+        volumes:
+            -   ./react-frontend:/opt/web
+            -   react_modules:/opt/web/node_modules
         ports:
             -   3000:3000
         links:
@@ -58,3 +66,7 @@ networks:
     default:
         driver: bridge
         name: 10hlab-net
+
+volumes:
+    php_vendor:
+    react_modules:

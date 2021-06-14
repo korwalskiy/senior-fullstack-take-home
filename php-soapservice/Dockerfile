@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    iputils-ping \
     default-mysql-client-core \
     netcat
 
@@ -20,8 +19,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY ./wait.sh /usr/local/bin/
 
-WORKDIR /app
+WORKDIR /opt/app
 
-COPY . /app
+COPY . .
 
 RUN composer install
